@@ -31,9 +31,8 @@ if (process.env.OTEL_EXPORTER_OTLP_ENDPOINT) {
   });
 
   provider.addSpanProcessor(new BatchSpanProcessor(exporter));
-  debugLog(
-    `OpenTelemetry exporter configured with endpoint: ${process.env.OTEL_EXPORTER_OTLP_ENDPOINT}`,
-  );
+  // Log only that OTEL is configured without exposing the full endpoint URL
+  debugLog('OpenTelemetry exporter configured');
 } else {
   debugLog('OpenTelemetry exporter not configured, skipping');
 }
@@ -111,17 +110,17 @@ if (process.env.KUSTO_ENABLE_PROMPTS) {
 const config: KustoConfig = {
   authMethod: authMethod,
   queryTimeout: process.env.KUSTO_QUERY_TIMEOUT
-    ? parseInt(process.env.KUSTO_QUERY_TIMEOUT)
+    ? parseInt(process.env.KUSTO_QUERY_TIMEOUT, 10)
     : undefined,
   responseFormat: responseFormat,
   markdownMaxCellLength: process.env.KUSTO_MARKDOWN_MAX_CELL_LENGTH
-    ? parseInt(process.env.KUSTO_MARKDOWN_MAX_CELL_LENGTH)
+    ? parseInt(process.env.KUSTO_MARKDOWN_MAX_CELL_LENGTH, 10)
     : undefined,
   maxResponseLength: process.env.KUSTO_MAX_RESPONSE_LENGTH
-    ? parseInt(process.env.KUSTO_MAX_RESPONSE_LENGTH)
+    ? parseInt(process.env.KUSTO_MAX_RESPONSE_LENGTH, 10)
     : undefined,
   minRowsInResponse: process.env.KUSTO_MIN_RESPONSE_ROWS
-    ? parseInt(process.env.KUSTO_MIN_RESPONSE_ROWS)
+    ? parseInt(process.env.KUSTO_MIN_RESPONSE_ROWS, 10)
     : undefined,
   clusterUrl: process.env.KUSTO_CLUSTER_URL && process.env.KUSTO_CLUSTER_URL.trim() ? process.env.KUSTO_CLUSTER_URL.trim() : undefined,
   defaultDatabase: process.env.KUSTO_DEFAULT_DATABASE && process.env.KUSTO_DEFAULT_DATABASE.trim() ? process.env.KUSTO_DEFAULT_DATABASE.trim() : undefined,
