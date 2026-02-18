@@ -50,16 +50,47 @@ criticalLog('Using Azure Identity authentication by default');
 if (process.env.KUSTO_AUTH_METHOD) {
   const method = process.env.KUSTO_AUTH_METHOD.toLowerCase();
 
-  if (method === 'azure-identity') {
-    authMethod = AuthenticationMethod.AzureIdentity;
-    criticalLog('Using Azure Identity authentication');
-  } else if (method === 'azure-cli') {
-    authMethod = AuthenticationMethod.AzureCli;
-    criticalLog('Using Azure CLI authentication');
-  } else {
-    criticalLog(
-      `Unknown authentication method: ${method}, falling back to Azure Identity`,
-    );
+  switch (method) {
+    case 'azure-identity':
+      authMethod = AuthenticationMethod.AzureIdentity;
+      criticalLog('Using Azure Identity (DefaultAzureCredential) authentication');
+      break;
+    case 'azure-cli':
+      authMethod = AuthenticationMethod.AzureCli;
+      criticalLog('Using Azure CLI authentication');
+      break;
+    case 'managed-identity':
+      authMethod = AuthenticationMethod.ManagedIdentity;
+      criticalLog('Using Managed Identity authentication');
+      break;
+    case 'client-secret':
+      authMethod = AuthenticationMethod.ClientSecret;
+      criticalLog('Using Client Secret authentication');
+      break;
+    case 'client-certificate':
+      authMethod = AuthenticationMethod.ClientCertificate;
+      criticalLog('Using Client Certificate authentication');
+      break;
+    case 'interactive-browser':
+      authMethod = AuthenticationMethod.InteractiveBrowser;
+      criticalLog('Using Interactive Browser authentication');
+      break;
+    case 'device-code':
+      authMethod = AuthenticationMethod.DeviceCode;
+      criticalLog('Using Device Code authentication');
+      break;
+    case 'username-password':
+      authMethod = AuthenticationMethod.UsernamePassword;
+      criticalLog('Using Username/Password authentication');
+      break;
+    case 'environment':
+      authMethod = AuthenticationMethod.Environment;
+      criticalLog('Using Environment Credential authentication');
+      break;
+    default:
+      criticalLog(
+        `Unknown authentication method: ${method}, falling back to Azure Identity`,
+      );
   }
 }
 

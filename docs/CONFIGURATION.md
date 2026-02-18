@@ -23,18 +23,27 @@ OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317/v1/traces
 
 ## Authentication Methods
 
-### Azure CLI Authentication (Recommended)
+The Kusto MCP Server supports multiple authentication methods for different scenarios. For comprehensive information about all available authentication methods, configuration options, and troubleshooting, please refer to our **[Authentication Guide](AUTHENTICATION.md)**.
 
-1. Set `KUSTO_AUTH_METHOD=azure-cli` in your `.env` file
-2. Ensure you're logged in with Azure CLI:
+### Quick Reference
 
-   ```bash
-   az login
-   ```
+**Set your authentication method in `.env`:**
 
-### Azure Identity Authentication
+```bash
+KUSTO_AUTH_METHOD=azure-cli  # Options: azure-identity, azure-cli, managed-identity, 
+                              #          client-secret, client-certificate, interactive-browser,
+                              #          device-code, username-password, environment
+```
 
-The server uses Azure Identity authentication by default when `KUSTO_AUTH_METHOD` is not set or set to `azure-identity`.
+**Common scenarios:**
+
+- **Local Development:** `azure-cli` (default, easiest to use)
+- **Production/Automated:** `azure-identity` (DefaultAzureCredential)
+- **Azure-hosted apps:** `managed-identity`
+- **Different Kusto account:** `interactive-browser` or `device-code`
+- **CI/CD pipelines:** `client-secret` or `client-certificate`
+
+For detailed configuration, use cases, and troubleshooting for each authentication method, see the [Authentication Guide](AUTHENTICATION.md).
 
 ## Response Formats
 
@@ -299,9 +308,10 @@ The server maintains connection state for efficiency. Connections are automatica
 ### Common Issues
 
 1. **Authentication Failures**
-   - Verify `az login` status
+   - See the [Authentication Guide](AUTHENTICATION.md#troubleshooting) for detailed troubleshooting
+   - Verify `az login` status for Azure CLI method
    - Check Azure permissions for the target cluster
-   - Ensure correct `KUSTO_AUTH_METHOD` setting
+   - Ensure correct `KUSTO_AUTH_METHOD` and related environment variables
 
 2. **Query Timeouts**
    - Increase `KUSTO_QUERY_TIMEOUT` for long queries
