@@ -11,7 +11,11 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { formatKustoMcpError, isKustoMcpError, sanitizeErrorMessage } from './common/errors.js';
+import {
+  formatKustoMcpError,
+  isKustoMcpError,
+  sanitizeErrorMessage,
+} from './common/errors.js';
 import { criticalLog, debugLog } from './common/utils.js';
 import {
   executeQuery,
@@ -131,18 +135,24 @@ export function createKustoServer(config: KustoConfig): Server {
   let connection: KustoConnection | null = null;
 
   // Initialize the prompt manager
-  const promptManager = validatedConfig.enablePrompts ? new PromptManager() : null;
+  const promptManager = validatedConfig.enablePrompts
+    ? new PromptManager()
+    : null;
 
   // Auto-connection function
   async function tryAutoConnect(): Promise<void> {
     // Only attempt auto-connection if both cluster URL and database are configured
     if (!validatedConfig.clusterUrl || !validatedConfig.defaultDatabase) {
-      debugLog('Auto-connection skipped: missing cluster URL or database configuration');
+      debugLog(
+        'Auto-connection skipped: missing cluster URL or database configuration',
+      );
       return;
     }
 
     try {
-      debugLog(`Attempting auto-connection to ${validatedConfig.clusterUrl} -> ${validatedConfig.defaultDatabase}`);
+      debugLog(
+        `Attempting auto-connection to ${validatedConfig.clusterUrl} -> ${validatedConfig.defaultDatabase}`,
+      );
 
       // Create a new connection
       const autoConnection = new KustoConnection(validatedConfig);
@@ -150,15 +160,20 @@ export function createKustoServer(config: KustoConfig): Server {
       // Initialize the connection
       const result = await autoConnection.initialize(
         validatedConfig.clusterUrl,
-        validatedConfig.defaultDatabase
+        validatedConfig.defaultDatabase,
       );
 
       // If successful, store the connection
       connection = autoConnection;
-      criticalLog(`Auto-connection successful: ${result.cluster} -> ${result.database}`);
+      criticalLog(
+        `Auto-connection successful: ${result.cluster} -> ${result.database}`,
+      );
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      criticalLog(`Auto-connection failed: ${errorMessage}. Manual connection will be required.`);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      criticalLog(
+        `Auto-connection failed: ${errorMessage}. Manual connection will be required.`,
+      );
       // Don't throw - just log and continue with manual connection mode
     }
   }
@@ -217,7 +232,9 @@ export function createKustoServer(config: KustoConfig): Server {
       criticalLog(`Error listing prompts: ${error}`);
       throw new McpError(
         ErrorCode.InternalError,
-        `Failed to list prompts: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to list prompts: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
     }
   });
@@ -242,7 +259,9 @@ export function createKustoServer(config: KustoConfig): Server {
 
       throw new McpError(
         ErrorCode.InternalError,
-        `Failed to get prompt: ${error instanceof Error ? error.message : String(error)}`
+        `Failed to get prompt: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
     }
   });
@@ -356,7 +375,10 @@ export function createKustoServer(config: KustoConfig): Server {
           const rawResult = await executeQuery(connection, modifiedQuery);
 
           // Transform using the proper architecture
-          const transformedResult = transformQueryResult(rawResult, validatedConfig);
+          const transformedResult = transformQueryResult(
+            rawResult,
+            validatedConfig,
+          );
 
           // Detect if results are partial using N+1 approach
           const hasMoreDataAvailable =
@@ -471,7 +493,11 @@ export function createKustoServer(config: KustoConfig): Server {
   tryAutoConnect().catch(error => {
     // This catch is redundant since tryAutoConnect already handles errors,
     // but it's a safety net in case of unexpected issues
-    criticalLog(`Unexpected error in auto-connection: ${error instanceof Error ? error.message : String(error)}`);
+    criticalLog(
+      `Unexpected error in auto-connection: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
   });
 
   return server;

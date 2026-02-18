@@ -50,16 +50,49 @@ criticalLog('Using Azure Identity authentication by default');
 if (process.env.KUSTO_AUTH_METHOD) {
   const method = process.env.KUSTO_AUTH_METHOD.toLowerCase();
 
-  if (method === 'azure-identity') {
-    authMethod = AuthenticationMethod.AzureIdentity;
-    criticalLog('Using Azure Identity authentication');
-  } else if (method === 'azure-cli') {
-    authMethod = AuthenticationMethod.AzureCli;
-    criticalLog('Using Azure CLI authentication');
-  } else {
-    criticalLog(
-      `Unknown authentication method: ${method}, falling back to Azure Identity`,
-    );
+  switch (method) {
+    case 'azure-identity':
+      authMethod = AuthenticationMethod.AzureIdentity;
+      criticalLog(
+        'Using Azure Identity (DefaultAzureCredential) authentication',
+      );
+      break;
+    case 'azure-cli':
+      authMethod = AuthenticationMethod.AzureCli;
+      criticalLog('Using Azure CLI authentication');
+      break;
+    case 'managed-identity':
+      authMethod = AuthenticationMethod.ManagedIdentity;
+      criticalLog('Using Managed Identity authentication');
+      break;
+    case 'client-secret':
+      authMethod = AuthenticationMethod.ClientSecret;
+      criticalLog('Using Client Secret authentication');
+      break;
+    case 'client-certificate':
+      authMethod = AuthenticationMethod.ClientCertificate;
+      criticalLog('Using Client Certificate authentication');
+      break;
+    case 'interactive-browser':
+      authMethod = AuthenticationMethod.InteractiveBrowser;
+      criticalLog('Using Interactive Browser authentication');
+      break;
+    case 'device-code':
+      authMethod = AuthenticationMethod.DeviceCode;
+      criticalLog('Using Device Code authentication');
+      break;
+    case 'username-password':
+      authMethod = AuthenticationMethod.UsernamePassword;
+      criticalLog('Using Username/Password authentication');
+      break;
+    case 'environment':
+      authMethod = AuthenticationMethod.Environment;
+      criticalLog('Using Environment Credential authentication');
+      break;
+    default:
+      criticalLog(
+        `Unknown authentication method: ${method}, falling back to Azure Identity`,
+      );
   }
 }
 
@@ -122,19 +155,32 @@ const config: KustoConfig = {
   minRowsInResponse: process.env.KUSTO_MIN_RESPONSE_ROWS
     ? parseInt(process.env.KUSTO_MIN_RESPONSE_ROWS, 10)
     : undefined,
-  clusterUrl: process.env.KUSTO_CLUSTER_URL && process.env.KUSTO_CLUSTER_URL.trim() ? process.env.KUSTO_CLUSTER_URL.trim() : undefined,
-  defaultDatabase: process.env.KUSTO_DEFAULT_DATABASE && process.env.KUSTO_DEFAULT_DATABASE.trim() ? process.env.KUSTO_DEFAULT_DATABASE.trim() : undefined,
+  clusterUrl:
+    process.env.KUSTO_CLUSTER_URL && process.env.KUSTO_CLUSTER_URL.trim()
+      ? process.env.KUSTO_CLUSTER_URL.trim()
+      : undefined,
+  defaultDatabase:
+    process.env.KUSTO_DEFAULT_DATABASE &&
+    process.env.KUSTO_DEFAULT_DATABASE.trim()
+      ? process.env.KUSTO_DEFAULT_DATABASE.trim()
+      : undefined,
   enableQueryStatistics: enableQueryStatistics,
   enablePrompts: enablePrompts,
 };
 
 // Log auto-connection configuration
 if (config.clusterUrl && config.defaultDatabase) {
-  criticalLog(`Auto-connection configured: ${config.clusterUrl} -> ${config.defaultDatabase}`);
+  criticalLog(
+    `Auto-connection configured: ${config.clusterUrl} -> ${config.defaultDatabase}`,
+  );
 } else if (config.clusterUrl || config.defaultDatabase) {
-  criticalLog('Partial auto-connection configuration detected (both KUSTO_CLUSTER_URL and KUSTO_DEFAULT_DATABASE required)');
+  criticalLog(
+    'Partial auto-connection configuration detected (both KUSTO_CLUSTER_URL and KUSTO_DEFAULT_DATABASE required)',
+  );
 } else {
-  criticalLog('No auto-connection configuration detected, manual connection required');
+  criticalLog(
+    'No auto-connection configuration detected, manual connection required',
+  );
 }
 
 // Create the server

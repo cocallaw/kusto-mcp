@@ -4,6 +4,13 @@
 export enum AuthenticationMethod {
   AzureCli = 'azure-cli',
   AzureIdentity = 'azure-identity',
+  ManagedIdentity = 'managed-identity',
+  ClientSecret = 'client-secret',
+  ClientCertificate = 'client-certificate',
+  InteractiveBrowser = 'interactive-browser',
+  DeviceCode = 'device-code',
+  UsernamePassword = 'username-password',
+  Environment = 'environment',
 }
 
 /**

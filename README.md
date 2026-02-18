@@ -85,6 +85,10 @@ Add this to your Claude Desktop configuration file:
 
 ## Authentication Setup
 
+The Kusto MCP Server supports multiple authentication methods to accommodate different scenarios - from local development to production deployments, and from personal accounts to service principals.
+
+### Quick Start (Local Development)
+
 1. **Install Azure CLI** (if you haven't already):
 
    ```bash
@@ -95,7 +99,8 @@ Add this to your Claude Desktop configuration file:
    brew install azure-cli
    
    # Linux
-   curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+   # See official installation guide for your distribution:
+   # https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux
    ```
 
 2. **Login to Azure**:
@@ -105,6 +110,44 @@ Add this to your Claude Desktop configuration file:
    ```
 
 3. **That's it!** Your AI assistant can now connect to your Azure Data Explorer clusters.
+
+### Alternative Authentication Methods
+
+If you need to use a different account for Kusto than your CLI login, or if you're in a production/automated environment, we support several additional authentication methods:
+
+- **DefaultAzureCredential** - Automatically tries multiple authentication methods (recommended for production)
+- **Managed Identity** - For Azure-hosted applications (VMs, App Services, AKS)
+- **Service Principal** - For automated services and CI/CD pipelines (with client secret or certificate)
+- **Interactive Browser** - Opens a browser for authentication (useful when your Kusto account differs from CLI)
+- **Device Code** - For headless/SSH environments
+- **Username/Password** - For legacy systems (not recommended)
+- **Environment Variables** - Reads credentials from environment variables
+
+📘 **For detailed information about all authentication methods and configuration options, see our [Authentication Guide](docs/AUTHENTICATION.md).**
+
+### Quick Examples
+
+**Using a different account for Kusto (Interactive):**
+```bash
+# In your .env file:
+KUSTO_AUTH_METHOD=interactive-browser
+AZURE_TENANT_ID=your-kusto-tenant-id
+```
+
+**Using Service Principal (CI/CD):**
+```bash
+# In your .env file:
+KUSTO_AUTH_METHOD=client-secret
+AZURE_TENANT_ID=your-tenant-id
+AZURE_CLIENT_ID=your-client-id
+AZURE_CLIENT_SECRET=your-client-secret
+```
+
+**Using Managed Identity (Azure VM/App Service):**
+```bash
+# In your .env file:
+KUSTO_AUTH_METHOD=managed-identity
+```
 
 ## Test It Works
 

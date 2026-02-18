@@ -57,13 +57,15 @@ export const PromptsGetRequestSchema = z.object({
 
 export const PromptsGetResponseSchema = z.object({
   description: z.string().optional(),
-  messages: z.array(z.object({
-    role: z.enum(['user', 'assistant']),
-    content: z.object({
-      type: z.literal('text'),
-      text: z.string(),
+  messages: z.array(
+    z.object({
+      role: z.enum(['user', 'assistant']),
+      content: z.object({
+        type: z.literal('text'),
+        text: z.string(),
+      }),
     }),
-  })),
+  ),
 });
 
 // Use the MCP SDK type for compatibility
