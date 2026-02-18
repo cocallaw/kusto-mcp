@@ -11,7 +11,7 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { formatKustoMcpError, isKustoMcpError } from './common/errors.js';
+import { formatKustoMcpError, isKustoMcpError, sanitizeErrorMessage } from './common/errors.js';
 import { criticalLog, debugLog } from './common/utils.js';
 import {
   executeQuery,
@@ -26,21 +26,66 @@ import { KustoConfig, validateConfig } from './types/config.js';
 
 // Define schemas for tool parameters
 const InitializeConnectionSchema = z.object({
-  cluster_url: z.string().describe('The URL of the Kusto cluster'),
-  database: z.string().describe('The database to connect to'),
+  cluster_url: z
+    .string()
+    .url('Invalid URL format')
+    .refine(
+      url => {
+        try {
+          const parsed = new URL(url);
+          return (
+            parsed.protocol === 'https:' &&
+            (parsed.hostname.endsWith('.kusto.windows.net') ||
+              parsed.hostname.endsWith('.kusto.azuresynapse.net') ||
+              parsed.hostname.endsWith('.kusto.fabric.microsoft.com'))
+          );
+        } catch {
+          return false;
+        }
+      },
+      {
+        message:
+          'Cluster URL must be a valid Kusto endpoint (e.g., https://*.kusto.windows.net)',
+      },
+    )
+    .describe('The URL of the Kusto cluster'),
+  database: z
+    .string()
+    .min(1, 'Database name cannot be empty')
+    .max(260, 'Database name too long')
+    .regex(
+      /^[a-zA-Z0-9_-]+$/,
+      'Database name must contain only alphanumeric characters, underscores, and hyphens',
+    )
+    .describe('The database to connect to'),
 });
 
 const ShowTablesSchema = z.object({});
 const ShowFunctionsSchema = z.object({});
 
 const ShowTableSchema = z.object({
-  tableName: z.string().describe('The name of the table to get the schema for'),
+  tableName: z
+    .string()
+    .min(1, 'Table name cannot be empty')
+    .max(1024, 'Table name too long')
+    .regex(
+      /^[a-zA-Z_][a-zA-Z0-9_]*$/,
+      'Table name must start with a letter or underscore and contain only alphanumeric characters and underscores',
+    )
+    .describe('The name of the table to get the schema for'),
 });
 
 const ExecuteQuerySchema = z.object({
-  query: z.string().describe('The query to execute'),
+  query: z
+    .string()
+    .min(1, 'Query cannot be empty')
+    .max(50000, 'Query exceeds maximum length of 50KB')
+    .describe('The query to execute'),
   limit: z
     .number()
+    .int('Limit must be an integer')
+    .min(1, 'Limit must be at least 1')
+    .max(10000, 'Limit cannot exceed 10000')
     .optional()
     .default(20)
     .describe('Maximum number of rows to return (default: 20)'),
@@ -49,6 +94,12 @@ const ExecuteQuerySchema = z.object({
 const ShowFunctionSchema = z.object({
   functionName: z
     .string()
+    .min(1, 'Function name cannot be empty')
+    .max(1024, 'Function name too long')
+    .regex(
+      /^[a-zA-Z_][a-zA-Z0-9_]*$/,
+      'Function name must start with a letter or underscore and contain only alphanumeric characters and underscores',
+    )
     .describe('The name of the function to get details for'),
 });
 
@@ -396,7 +447,7 @@ export function createKustoServer(config: KustoConfig): Server {
     } catch (error) {
       criticalLog(`Error handling tool call: ${error}`);
 
-      // Format the error message
+      // Format the error message with sanitization
       let errorMessage: string;
 
       if (error instanceof McpError) {
@@ -404,9 +455,8 @@ export function createKustoServer(config: KustoConfig): Server {
       } else if (isKustoMcpError(error)) {
         errorMessage = formatKustoMcpError(error);
       } else {
-        errorMessage = `Error: ${
-          error instanceof Error ? error.message : String(error)
-        }`;
+        // Sanitize error messages to prevent information disclosure
+        errorMessage = sanitizeErrorMessage(error);
       }
 
       return {

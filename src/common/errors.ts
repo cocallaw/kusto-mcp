@@ -114,3 +114,40 @@ export function formatKustoMcpError(error: KustoMcpError): string {
     return `Kusto Error: ${error.message}`;
   }
 }
+
+/**
+ * Sanitize error messages to prevent information disclosure
+ * Removes sensitive information like internal paths, credentials, or detailed cluster info
+ */
+export function sanitizeErrorMessage(error: unknown): string {
+  if (error instanceof KustoMcpError) {
+    // For our custom errors, use the formatted message
+    return formatKustoMcpError(error);
+  }
+
+  // For other errors, sanitize the message
+  const message =
+    error instanceof Error ? error.message : String(error || 'Unknown error');
+
+  // Remove URLs and sensitive patterns
+  const sanitized = message
+    .replace(/https?:\/\/[^\s]+/g, '[URL]') // Remove URLs
+    .replace(/Bearer\s+[^\s]+/gi, '[TOKEN]') // Remove bearer tokens
+    .replace(/password[=:]\s*[^\s]+/gi, 'password=[REDACTED]') // Remove passwords
+    .replace(/key[=:]\s*[^\s]+/gi, 'key=[REDACTED]') // Remove API keys
+    .replace(/secret[=:]\s*[^\s]+/gi, 'secret=[REDACTED]'); // Remove secrets
+
+  // If message contains auth-related errors, generalize them
+  if (
+    /authentication|unauthorized|forbidden|access denied/i.test(sanitized)
+  ) {
+    return 'Authentication failed. Please verify your credentials and permissions.';
+  }
+
+  // If message contains connection errors with details, generalize them
+  if (/connection|network|timeout|ECONNREFUSED|ETIMEDOUT/i.test(sanitized)) {
+    return 'Connection failed. Please verify the cluster URL and network connectivity.';
+  }
+
+  return sanitized;
+}
