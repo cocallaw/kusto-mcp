@@ -138,9 +138,7 @@ export function sanitizeErrorMessage(error: unknown): string {
     .replace(/secret[=:]\s*[^\s]+/gi, 'secret=[REDACTED]'); // Remove secrets
 
   // If message contains auth-related errors, generalize them
-  if (
-    /authentication|unauthorized|forbidden|access denied/i.test(sanitized)
-  ) {
+  if (/authentication|unauthorized|forbidden|access denied/i.test(sanitized)) {
     return 'Authentication failed. Please verify your credentials and permissions.';
   }
 

@@ -29,13 +29,17 @@ export function createTokenCredential(
         return new AzureCliCredential();
 
       case 'azure-identity':
-        debugLog('Using Azure Identity (DefaultAzureCredential) authentication');
+        debugLog(
+          'Using Azure Identity (DefaultAzureCredential) authentication',
+        );
         return new DefaultAzureCredential();
 
       case 'managed-identity': {
         debugLog('Using Managed Identity authentication');
         const clientId = process.env.AZURE_CLIENT_ID;
-        return new ManagedIdentityCredential(clientId ? { clientId } : undefined);
+        return new ManagedIdentityCredential(
+          clientId ? { clientId } : undefined,
+        );
       }
 
       case 'client-secret': {
@@ -58,7 +62,8 @@ export function createTokenCredential(
         const tenantId = process.env.AZURE_TENANT_ID;
         const clientId = process.env.AZURE_CLIENT_ID;
         const certificatePath = process.env.AZURE_CLIENT_CERTIFICATE_PATH;
-        const certificatePassword = process.env.AZURE_CLIENT_CERTIFICATE_PASSWORD;
+        const certificatePassword =
+          process.env.AZURE_CLIENT_CERTIFICATE_PASSWORD;
 
         if (!tenantId || !clientId || !certificatePath) {
           throw new KustoAuthenticationError(

@@ -53,7 +53,9 @@ if (process.env.KUSTO_AUTH_METHOD) {
   switch (method) {
     case 'azure-identity':
       authMethod = AuthenticationMethod.AzureIdentity;
-      criticalLog('Using Azure Identity (DefaultAzureCredential) authentication');
+      criticalLog(
+        'Using Azure Identity (DefaultAzureCredential) authentication',
+      );
       break;
     case 'azure-cli':
       authMethod = AuthenticationMethod.AzureCli;
@@ -153,19 +155,32 @@ const config: KustoConfig = {
   minRowsInResponse: process.env.KUSTO_MIN_RESPONSE_ROWS
     ? parseInt(process.env.KUSTO_MIN_RESPONSE_ROWS, 10)
     : undefined,
-  clusterUrl: process.env.KUSTO_CLUSTER_URL && process.env.KUSTO_CLUSTER_URL.trim() ? process.env.KUSTO_CLUSTER_URL.trim() : undefined,
-  defaultDatabase: process.env.KUSTO_DEFAULT_DATABASE && process.env.KUSTO_DEFAULT_DATABASE.trim() ? process.env.KUSTO_DEFAULT_DATABASE.trim() : undefined,
+  clusterUrl:
+    process.env.KUSTO_CLUSTER_URL && process.env.KUSTO_CLUSTER_URL.trim()
+      ? process.env.KUSTO_CLUSTER_URL.trim()
+      : undefined,
+  defaultDatabase:
+    process.env.KUSTO_DEFAULT_DATABASE &&
+    process.env.KUSTO_DEFAULT_DATABASE.trim()
+      ? process.env.KUSTO_DEFAULT_DATABASE.trim()
+      : undefined,
   enableQueryStatistics: enableQueryStatistics,
   enablePrompts: enablePrompts,
 };
 
 // Log auto-connection configuration
 if (config.clusterUrl && config.defaultDatabase) {
-  criticalLog(`Auto-connection configured: ${config.clusterUrl} -> ${config.defaultDatabase}`);
+  criticalLog(
+    `Auto-connection configured: ${config.clusterUrl} -> ${config.defaultDatabase}`,
+  );
 } else if (config.clusterUrl || config.defaultDatabase) {
-  criticalLog('Partial auto-connection configuration detected (both KUSTO_CLUSTER_URL and KUSTO_DEFAULT_DATABASE required)');
+  criticalLog(
+    'Partial auto-connection configuration detected (both KUSTO_CLUSTER_URL and KUSTO_DEFAULT_DATABASE required)',
+  );
 } else {
-  criticalLog('No auto-connection configuration detected, manual connection required');
+  criticalLog(
+    'No auto-connection configuration detected, manual connection required',
+  );
 }
 
 // Create the server
