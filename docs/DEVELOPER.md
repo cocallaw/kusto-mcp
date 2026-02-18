@@ -1,52 +1,54 @@
 # Developer Documentation
 
-This document contains technical information for developers who want to contribute to the Kusto MCP Server project, build from source, or understand the implementation details.
+This document contains technical information for developers who want to contribute to the Kusto MCP Server project or understand the implementation details.
+
+## Getting Started
+
+For instructions on setting up your development environment, building the project, and installing locally, see the **[Installation Guide](../INSTALL.md)**.
+
+This document focuses on:
+- Project architecture and structure
+- Development workflows
+- Contributing guidelines
+- CI/CD processes
 
 ## Prerequisites
 
+See the [Installation Guide](../INSTALL.md#prerequisites) for detailed prerequisites and setup instructions.
+
+Quick summary:
 - Node.js 16.x or higher
 - npm 8.x or higher
-- Access to an Azure Data Explorer (Kusto) cluster
+- Access to an Azure Data Explorer (Kusto) cluster for testing
 - Azure CLI or Azure Identity for authentication
 
 ## Development Setup
 
-### Building from Source
+For complete setup instructions including dependency installation and building, see:
+- **[Installation Guide - Detailed Setup Instructions](../INSTALL.md#detailed-setup-instructions)**
+- **[Installation Guide - Building the Project](../INSTALL.md#building-the-project)**
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/johnib/kusto-mcp
-   cd kusto-mcp
-   ```
-
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Build the project:
-
-   ```bash
-   npm run build
-   ```
-
-### Running in Development Mode
-
-Start the server in development mode with auto-restart:
+### Quick Reference
 
 ```bash
-npm run dev
-```
+# Clone and setup (see Installation Guide for details)
+git clone https://github.com/johnib/kusto-mcp
+cd kusto-mcp
+npm install
+npm run build
 
-For production:
-
-```bash
-npm start
+# Development commands
+npm run dev          # Run in development mode with auto-reload
+npm start            # Run production build
+npm run inspector    # Launch MCP Inspector for testing
 ```
 
 ### Testing
+
+For complete testing instructions including setup and troubleshooting, see:
+- **[Installation Guide - Testing Your Installation](../INSTALL.md#testing-your-installation)**
+- **[Installation Guide - Development Workflow](../INSTALL.md#development-workflow)**
+- **[Testing Guide](../TESTING_GUIDE.md)** - Comprehensive testing documentation
 
 #### End-to-End Tests
 

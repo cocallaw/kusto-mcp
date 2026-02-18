@@ -207,12 +207,25 @@ Need custom settings? Check out our [Configuration Guide](docs/CONFIGURATION.md)
 
 ## For Developers
 
+### Local Setup and Installation
+
+Want to run Kusto MCP Server locally or contribute to the project? See our [Installation Guide](INSTALL.md) for:
+
+- Complete setup instructions (prerequisites, dependencies, configuration)
+- Building the project from source
+- Local installation options (npm link, direct execution, packaging)
+- Development workflow and testing
+- Comprehensive troubleshooting
+
+### Contributing
+
 Building, testing, or contributing? See our [Developer Documentation](docs/DEVELOPER.md) for:
 
-- Building from source
-- Running tests
-- Project structure
-- Contributing guidelines
+- Project structure and architecture
+- Adding new operations
+- Running tests (unit and E2E)
+- CI/CD and release process
+- Code quality guidelines
 
 ## License
 
