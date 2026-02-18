@@ -16,8 +16,9 @@ import { criticalLog, debugLog } from '../common/utils.js';
 /**
  * Factory function to create a TokenCredential based on the authentication method
  *
- * @param method The authentication method to use (defaults to 'azure-cli' for backward compatibility,
- *               but in practice this is always provided from config which defaults to 'azure-identity')
+ * @param method The authentication method to use. Defaults to 'azure-cli' if not provided.
+ *               Note: In normal usage, this parameter is always supplied from KustoConfig,
+ *               which defaults to 'azure-identity' (DefaultAzureCredential).
  * @returns A TokenCredential instance
  */
 export function createTokenCredential(

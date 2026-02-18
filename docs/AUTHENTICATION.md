@@ -238,12 +238,13 @@ AZURE_CLIENT_ID=your-client-id  # Optional: specify app
 - IoT devices
 - Remote servers without display
 
-### Username and Password
+### Username and Password ⚠️
 
 **Method:** `username-password`  
-**Best for:** Legacy systems, specific testing scenarios
+**Best for:** Legacy systems, specific testing scenarios  
+**⚠️ WARNING: Not recommended for production use.** Only works with accounts that do not have MFA enabled.
 
-⚠️ **Not recommended for production use.** Uses a username and password for authentication. Only works with accounts that do not have MFA enabled.
+Uses a username and password for authentication.
 
 **Configuration:**
 
