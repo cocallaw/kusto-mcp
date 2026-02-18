@@ -33,7 +33,7 @@ The easiest way to get started is using Azure CLI authentication:
 # Install Azure CLI (if not already installed)
 # Windows: winget install Microsoft.AzureCLI
 # macOS: brew install azure-cli
-# Linux: curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+# Linux: See https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux
 
 # Login to Azure
 az login
@@ -243,7 +243,7 @@ AZURE_CLIENT_ID=your-client-id  # Optional: specify app
 **Method:** `username-password`  
 **Best for:** Legacy systems, specific testing scenarios
 
-⚠️ **Not recommended for production use.** Uses a username and password for authentication. Only works with accounts that don't have MFA enabled.
+⚠️ **Not recommended for production use.** Uses a username and password for authentication. Only works with accounts that do not have MFA enabled.
 
 **Configuration:**
 

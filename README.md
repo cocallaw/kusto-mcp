@@ -99,7 +99,8 @@ The Kusto MCP Server supports multiple authentication methods to accommodate dif
    brew install azure-cli
    
    # Linux
-   curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+   # See official installation guide for your distribution:
+   # https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-linux
    ```
 
 2. **Login to Azure**:

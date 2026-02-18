@@ -16,11 +16,12 @@ import { criticalLog, debugLog } from '../common/utils.js';
 /**
  * Factory function to create a TokenCredential based on the authentication method
  *
- * @param method The authentication method to use
+ * @param method The authentication method to use (defaults to 'azure-cli' for backward compatibility,
+ *               but in practice this is always provided from config which defaults to 'azure-identity')
  * @returns A TokenCredential instance
  */
 export function createTokenCredential(
-  method: string = 'azure-identity',
+  method: string = 'azure-cli',
 ): TokenCredential {
   try {
     switch (method.toLowerCase()) {
